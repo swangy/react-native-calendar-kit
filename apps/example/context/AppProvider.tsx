@@ -32,19 +32,34 @@ const AppProvider: FC<PropsWithChildren<object>> = ({ children }) => {
 
   const colorScheme = useColorScheme();
   const themeValue = useMemo(() => {
+    const lightTheme: Theme = {
+      ...DefaultTheme,
+      colors: {
+        ...DefaultTheme.colors,
+        card: '#ffffff',
+        background: '#fafafa',
+        text: '#1f2937',
+        border: '#e5e7eb',
+        primary: '#6366f1',
+      },
+    };
+    
     const darkTheme: Theme = {
       ...DarkTheme,
       colors: {
         ...DarkTheme.colors,
-        card: '#1A1B21',
-        background: '#000',
-        text: '#F1F0F7',
+        card: '#1e293b',
+        background: '#0f172a',
+        text: '#f1f5f9',
+        border: '#334155',
+        primary: '#818cf8',
       },
     };
+    
     if (configs.themeMode === 'auto') {
-      return colorScheme === 'dark' ? darkTheme : DefaultTheme;
+      return colorScheme === 'dark' ? darkTheme : lightTheme;
     }
-    return configs.themeMode === 'dark' ? darkTheme : DefaultTheme;
+    return configs.themeMode === 'dark' ? darkTheme : lightTheme;
   }, [colorScheme, configs.themeMode]);
 
   const _updateConfigs = useCallback((newConfigs: Partial<AppConfigs>) => {

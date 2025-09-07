@@ -14,7 +14,7 @@ const CustomUnavailableHour: FC<
     height: SharedValue<number>;
   }
 > = (props) => {
-  const patternSize = 5;
+  const patternSize = 8;
 
   const rectProps = useAnimatedProps(() => ({
     height: props.height.value,
@@ -25,7 +25,7 @@ const CustomUnavailableHour: FC<
     <Svg>
       <Defs>
         <Pattern
-          id="stripe-pattern"
+          id="modern-stripe-pattern"
           patternUnits="userSpaceOnUse"
           width={patternSize}
           height={patternSize}
@@ -34,10 +34,11 @@ const CustomUnavailableHour: FC<
             x1={0}
             y={0}
             x2={0}
-            y2={patternSize + 5}
-            stroke="#ccc"
-            strokeWidth={1.5}
-            strokeLinecap="butt"
+            y2={patternSize + 8}
+            stroke="#e2e8f0"
+            strokeWidth={1}
+            strokeLinecap="round"
+            opacity={0.6}
           />
         </Pattern>
       </Defs>
@@ -45,7 +46,14 @@ const CustomUnavailableHour: FC<
         x="0"
         y="0"
         width="100%"
-        fill="url(#stripe-pattern)"
+        fill="#f8fafc"
+        animatedProps={rectProps}
+      />
+      <AnimatedRect
+        x="0"
+        y="0"
+        width="100%"
+        fill="url(#modern-stripe-pattern)"
         animatedProps={rectProps}
       />
     </Svg>

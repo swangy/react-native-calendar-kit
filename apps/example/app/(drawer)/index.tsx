@@ -69,24 +69,34 @@ const INITIAL_DATE = new Date(
 const CALENDAR_THEME = {
   light: {
     colors: {
-      primary: '#1a73e8',
-      onPrimary: '#fff',
-      background: '#fff',
-      onBackground: '#000',
-      border: '#dadce0',
-      text: '#000',
-      surface: '#ECECEC',
+      primary: '#6366f1', // Modern indigo
+      onPrimary: '#ffffff',
+      background: '#fafafa', // Soft white
+      onBackground: '#1f2937', // Dark gray
+      border: '#e5e7eb', // Light gray
+      text: '#1f2937', // Dark gray
+      surface: '#f8fafc', // Very light gray
+      secondary: '#8b5cf6', // Purple accent
+      accent: '#06b6d4', // Cyan accent
+      success: '#10b981', // Green
+      warning: '#f59e0b', // Amber
+      error: '#ef4444', // Red
     },
   },
   dark: {
     colors: {
-      primary: '#4E98FA',
-      onPrimary: '#FFF',
-      background: '#1A1B21',
-      onBackground: '#FFF',
-      border: '#46464C',
-      text: '#FFF',
-      surface: '#545454',
+      primary: '#818cf8', // Lighter indigo for dark mode
+      onPrimary: '#ffffff',
+      background: '#0f172a', // Dark slate
+      onBackground: '#000000', // Light slate
+      border: '#334155', // Medium slate
+      text: '#f1f5f9', // Light slate
+      surface: '#1e293b', // Darker slate
+      secondary: '#a78bfa', // Lighter purple
+      accent: '#22d3ee', // Lighter cyan
+      success: '#34d399', // Lighter green
+      warning: '#fbbf24', // Lighter amber
+      error: '#f87171', // Lighter red
     },
   },
 };
@@ -494,13 +504,21 @@ const Calendar = () => {
   };
 
   const _renderResource = useCallback((resource: ResourceItem) => {
+    const theme = configs.themeMode === 'auto'
+      ? colorScheme === 'dark'
+        ? CALENDAR_THEME.dark
+        : CALENDAR_THEME.light
+      : CALENDAR_THEME[configs.themeMode];
+    
     return (
-      <View style={styles.resourceContainer}>
-        <Ionicons name="person-circle-outline" size={24} color="black" />
-        <Text>{resource.title}</Text>
+      <View style={[styles.resourceContainer, { backgroundColor: theme.colors.surface || '#f8fafc' }]}>
+        <View style={[styles.resourceIconContainer, { backgroundColor: theme.colors.primary }]}>
+          <Ionicons name="person-circle-outline" size={20} color="#ffffff" />
+        </View>
+        <Text style={[styles.resourceText, { color: theme.colors.text }]}>{resource.title}</Text>
       </View>
     );
-  }, []);
+  }, [configs.themeMode, colorScheme]);
 
   const _renderResourceHeaderItem = useCallback(
     (item: HeaderItemProps) => {
@@ -560,16 +578,37 @@ const Calendar = () => {
   );
 
   const _renderDraggingEvent = useCallback((props: DraggingEventProps) => {
+    const theme = configs.themeMode === 'auto'
+      ? colorScheme === 'dark'
+        ? CALENDAR_THEME.dark
+        : CALENDAR_THEME.light
+      : CALENDAR_THEME[configs.themeMode];
+    
     return (
       <DraggingEvent
         {...props}
-        containerStyle={{ backgroundColor: '#1a73e8', opacity: 0.5 }}
+        containerStyle={{ 
+          backgroundColor: theme.colors.primary, 
+          opacity: 0.6,
+          borderRadius: 8,
+          shadowColor: theme.colors.primary,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          elevation: 8,
+        }}
       />
     );
-  }, []);
+  }, [configs.themeMode, colorScheme]);
+
+  const theme = configs.themeMode === 'auto'
+    ? colorScheme === 'dark'
+      ? CALENDAR_THEME.dark
+      : CALENDAR_THEME.light
+    : CALENDAR_THEME[configs.themeMode];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Header
         currentDate={currentDate}
         onPressToday={_onPressToday}
@@ -725,22 +764,73 @@ const Calendar = () => {
 export default Calendar;
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  actions: { flexDirection: 'row', gap: 10, padding: 10 },
+  container: { 
+    flex: 1,
+  },
+  actions: { 
+    flexDirection: 'row', 
+    gap: 12, 
+    padding: 16,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    margin: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
   btn: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    backgroundColor: '#23cfde',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#6366f1',
+    borderRadius: 8,
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   header: {
     backgroundColor: 'white',
     padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  date: { fontSize: 16, fontWeight: 'bold' },
+  date: { 
+    fontSize: 18, 
+    fontWeight: '600',
+    color: '#1f2937',
+  },
   resourceContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
     gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    marginHorizontal: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  resourceIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  resourceText: {
+    fontSize: 12,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
