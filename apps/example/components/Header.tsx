@@ -12,6 +12,7 @@ interface HeaderProps {
   onPressToday?: () => void;
   onPressPrevious?: () => void;
   onPressNext?: () => void;
+  onCreateEvent?: () => void;
   isResourcesMode?: boolean;
 }
 
@@ -20,6 +21,7 @@ const Header: FC<HeaderProps> = ({
   onPressToday,
   onPressPrevious,
   onPressNext,
+  onCreateEvent,
   isResourcesMode,
 }) => {
   const theme = useTheme();
@@ -90,6 +92,19 @@ const Header: FC<HeaderProps> = ({
         <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
           {title}
         </Text>
+        {onCreateEvent && (
+          <TouchableOpacity
+            hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
+            activeOpacity={0.7}
+            style={[styles.createButton, { backgroundColor: theme.colors.primary }]}
+            onPress={onCreateEvent}>
+            <MaterialCommunityIcons
+              name="plus"
+              size={20}
+              color="#ffffff"
+            />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
           activeOpacity={0.7}
@@ -160,6 +175,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 8,
     borderRadius: 16,
+  },
+  createButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    marginRight: 8,
   },
   todayButton: {
     width: 44,

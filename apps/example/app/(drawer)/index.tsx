@@ -42,6 +42,7 @@ import {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '../../components/Header';
+import EventEditModal from '../../components/EventEditModal';
 import { useAppContext } from '../../context/AppProvider';
 
 configureReanimatedLogger({ strict: false });
@@ -401,6 +402,8 @@ const Calendar = () => {
   const [calendarWidth, setCalendarWidth] = useState(
     Dimensions.get('window').width
   );
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
 
   const isResourcesMode = params.viewMode === 'resources';
 
@@ -427,6 +430,42 @@ const Calendar = () => {
       hourScroll: true,
     });
   }, []);
+
+  const handleEditEvent = useCallback((event: EventItem) => {
+    setEditingEvent(event);
+    setShowEditModal(true);
+  }, []);
+
+  const handleSaveEvent = useCallback((updatedEvent: EventItem) => {
+    setEvents(prevEvents => {
+      const filteredEvents = prevEvents.filter(e => e.id !== updatedEvent.id);
+      return [...filteredEvents, updatedEvent];
+    });
+    setShowEditModal(false);
+    setEditingEvent(null);
+  }, []);
+
+  const handleDeleteEvent = useCallback((eventId: string) => {
+    setEvents(prevEvents => prevEvents.filter(e => e.id !== eventId));
+    setShowEditModal(false);
+    setEditingEvent(null);
+  }, []);
+
+  const handleCreateEvent = useCallback(() => {
+    const now = new Date();
+    const newEvent: EventItem = {
+      id: `event_${Date.now()}`,
+      title: 'New Event',
+      start: {
+        dateTime: now.toISOString(),
+      },
+      end: {
+        dateTime: new Date(now.getTime() + 60 * 60 * 1000).toISOString(), // 1 hour later
+      },
+      color: '#23cfde',
+    };
+    handleEditEvent(newEvent);
+  }, [handleEditEvent]);
 
   const resources = useMemo(() => {
     return new Array(TOTAL_RESOURCES).fill(0).map((_, index) => {
@@ -619,6 +658,7 @@ const Calendar = () => {
         onPressToday={_onPressToday}
         onPressPrevious={onPressPrevious}
         onPressNext={onPressNext}
+        onCreateEvent={handleCreateEvent}
         isResourcesMode={isResourcesMode}
       />
       <CalendarContainer
@@ -652,6 +692,7 @@ const Calendar = () => {
         events={events}
         onPressEvent={(event) => {
           console.log(event);
+          handleEditEvent(event);
         }}
         onLoad={() => {
           console.log('onLoad');
@@ -737,6 +778,8 @@ const Calendar = () => {
           const newEvents = [...events, newEvent];
           setEvents(newEvents);
           setSelectedEvent(newEvent);
+          // Open edit modal for the new event
+          handleEditEvent(newEvent);
         }}
         /**
          * Resource
@@ -762,6 +805,17 @@ const Calendar = () => {
           }
         />
       </CalendarContainer>
+      
+      <EventEditModal
+        visible={showEditModal}
+        event={editingEvent}
+        onClose={() => {
+          setShowEditModal(false);
+          setEditingEvent(null);
+        }}
+        onSave={handleSaveEvent}
+        onDelete={handleDeleteEvent}
+      />
     </View>
   );
 };
