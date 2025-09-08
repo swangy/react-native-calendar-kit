@@ -82,13 +82,15 @@ const CALENDAR_THEME = {
       warning: '#f59e0b', // Amber
       error: '#ef4444', // Red
     },
+    // Specific unavailable hour styling for light mode
+    unavailableHourBackgroundColor: '#f1f5f9', // Slightly darker than surface
   },
   dark: {
     colors: {
       primary: '#818cf8', // Lighter indigo for dark mode
       onPrimary: '#ffffff',
       background: '#0f172a', // Dark slate
-      onBackground: '#000000', // Light slate
+      onBackground: '#f1f5f9', // Light slate - fixed for hour text visibility
       border: '#334155', // Medium slate
       text: '#f1f5f9', // Light slate
       surface: '#1e293b', // Darker slate
@@ -98,6 +100,8 @@ const CALENDAR_THEME = {
       warning: '#fbbf24', // Lighter amber
       error: '#f87171', // Lighter red
     },
+    // Specific unavailable hour styling for dark mode - much darker
+    unavailableHourBackgroundColor: '#0a0f1a', // Much darker than surface for better contrast
   },
 };
 
@@ -436,6 +440,7 @@ const Calendar = () => {
   const unavailableHours = useMemo(
     () => [
       { start: 0, end: 6 * 60, enableBackgroundInteraction: true },
+      //{ start: 6 * 60, end: 7 * 60, enableBackgroundInteraction: true }, // Added missing 6am-7am
       { start: 20 * 60, end: 24 * 60, enableBackgroundInteraction: true },
       {
         start: 7 * 60,
