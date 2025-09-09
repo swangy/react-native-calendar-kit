@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Modal,
   View,
   Text,
   TextInput,
@@ -10,9 +9,11 @@ import {
   Switch,
   Alert,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { useTheme } from '@react-navigation/native';
+import CustomDateTimePicker from './CustomDateTimePicker';
 import type { EventItem, DateOrDateTime } from '@howljs/calendar-kit';
 
 interface EventEditModalProps {
@@ -40,6 +41,7 @@ const EventEditModal: React.FC<EventEditModalProps> = ({
   onSave,
   onDelete,
 }) => {
+  const theme = useTheme();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isAllDay, setIsAllDay] = useState(false);
@@ -244,57 +246,54 @@ const EventEditModal: React.FC<EventEditModalProps> = ({
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const dynamicStyles = getStyles(theme);
+
   if (!visible) return null;
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      presentationStyle="formSheet"
-      onRequestClose={onClose}
-    >
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onClose} style={styles.headerButton}>
-            <Text style={styles.headerButtonText}>Cancel</Text>
+    <View style={dynamicStyles.overlay}>
+      <SafeAreaView style={dynamicStyles.container}>
+        <View style={dynamicStyles.header}>
+          <TouchableOpacity onPress={onClose} style={dynamicStyles.headerButton}>
+            <Text style={dynamicStyles.headerButtonText}>Cancel</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Event</Text>
-          <TouchableOpacity onPress={handleSave} style={styles.headerButton}>
-            <Text style={[styles.headerButtonText, styles.saveButton]}>Save</Text>
+          <Text style={dynamicStyles.headerTitle}>Edit Event</Text>
+          <TouchableOpacity onPress={handleSave} style={dynamicStyles.headerButton}>
+            <Text style={[dynamicStyles.headerButtonText, dynamicStyles.saveButton]}>Save</Text>
           </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView style={dynamicStyles.content} showsVerticalScrollIndicator={false} bounces={false}>
           {/* Title */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Title *</Text>
+          <View style={dynamicStyles.section}>
+            <Text style={dynamicStyles.label}>Title *</Text>
             <TextInput
-              style={styles.input}
+              style={dynamicStyles.input}
               value={title}
               onChangeText={setTitle}
               placeholder="Event title"
-              placeholderTextColor="#999"
+              placeholderTextColor={theme.dark ? "#999" : "#666"}
             />
           </View>
 
           {/* Description */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Description</Text>
+          <View style={dynamicStyles.section}>
+            <Text style={dynamicStyles.label}>Description</Text>
             <TextInput
-              style={[styles.input, styles.textArea]}
+              style={[dynamicStyles.input, dynamicStyles.textArea]}
               value={description}
               onChangeText={setDescription}
               placeholder="Event description"
-              placeholderTextColor="#999"
+              placeholderTextColor={theme.dark ? "#999" : "#666"}
               multiline
               numberOfLines={3}
             />
           </View>
 
           {/* All Day Toggle */}
-          <View style={styles.section}>
-            <View style={styles.toggleRow}>
-              <Text style={styles.label}>All Day Event</Text>
+          <View style={dynamicStyles.section}>
+            <View style={dynamicStyles.toggleRow}>
+              <Text style={dynamicStyles.label}>All Day Event</Text>
               <Switch
                 value={isAllDay}
                 onValueChange={setIsAllDay}
@@ -305,81 +304,81 @@ const EventEditModal: React.FC<EventEditModalProps> = ({
           </View>
 
           {/* Start Date/Time */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Start {isAllDay ? 'Date' : 'Date & Time'}</Text>
-            <View style={styles.dateTimeRow}>
+          <View style={dynamicStyles.section}>
+            <Text style={dynamicStyles.label}>Start {isAllDay ? 'Date' : 'Date & Time'}</Text>
+            <View style={dynamicStyles.dateTimeRow}>
               <TouchableOpacity
-                style={styles.dateTimeButton}
+                style={dynamicStyles.dateTimeButton}
                 onPress={() => {
                   console.log('Start date picker pressed');
                   setShowStartDatePicker(true);
                 }}
               >
                 <Ionicons name="calendar-outline" size={20} color="#666" />
-                <Text style={styles.dateTimeText}>{formatDate(startDate)}</Text>
+                <Text style={dynamicStyles.dateTimeText}>{formatDate(startDate)}</Text>
               </TouchableOpacity>
               
               {!isAllDay && (
                 <TouchableOpacity
-                  style={styles.dateTimeButton}
+                  style={dynamicStyles.dateTimeButton}
                   onPress={() => {
                     console.log('Start time picker pressed');
                     setShowStartTimePicker(true);
                   }}
                 >
                   <Ionicons name="time-outline" size={20} color="#666" />
-                  <Text style={styles.dateTimeText}>{formatTime(startTime)}</Text>
+                  <Text style={dynamicStyles.dateTimeText}>{formatTime(startTime)}</Text>
                 </TouchableOpacity>
               )}
             </View>
           </View>
 
           {/* End Date/Time */}
-          <View style={styles.section}>
-            <Text style={styles.label}>End {isAllDay ? 'Date' : 'Date & Time'}</Text>
-            <View style={styles.dateTimeRow}>
+          <View style={dynamicStyles.section}>
+            <Text style={dynamicStyles.label}>End {isAllDay ? 'Date' : 'Date & Time'}</Text>
+            <View style={dynamicStyles.dateTimeRow}>
               <TouchableOpacity
-                style={styles.dateTimeButton}
+                style={dynamicStyles.dateTimeButton}
                 onPress={() => {
                   console.log('End date picker pressed');
                   setShowEndDatePicker(true);
                 }}
               >
                 <Ionicons name="calendar-outline" size={20} color="#666" />
-                <Text style={styles.dateTimeText}>{formatDate(endDate)}</Text>
+                <Text style={dynamicStyles.dateTimeText}>{formatDate(endDate)}</Text>
               </TouchableOpacity>
               
               {!isAllDay && (
                 <TouchableOpacity
-                  style={styles.dateTimeButton}
+                  style={dynamicStyles.dateTimeButton}
                   onPress={() => {
                     console.log('End time picker pressed');
                     setShowEndTimePicker(true);
                   }}
                 >
                   <Ionicons name="time-outline" size={20} color="#666" />
-                  <Text style={styles.dateTimeText}>{formatTime(endTime)}</Text>
+                  <Text style={dynamicStyles.dateTimeText}>{formatTime(endTime)}</Text>
                 </TouchableOpacity>
               )}
             </View>
           </View>
 
           {/* Recurrence */}
-          <View style={styles.section}>
-            <Text style={styles.label}>Repeat</Text>
-            <View style={styles.recurrenceContainer}>
+          <View style={dynamicStyles.section}>
+            <Text style={dynamicStyles.label}>Repeat</Text>
+            <View style={dynamicStyles.recurrenceContainer}>
               {(['none', 'daily', 'weekly', 'monthly', 'yearly'] as RecurrenceType[]).map((type) => (
                 <TouchableOpacity
                   key={type}
                   style={[
-                    styles.recurrenceOption,
-                    recurrenceOptions.type === type && styles.recurrenceOptionSelected
+                    dynamicStyles.recurrenceOption,
+                    recurrenceOptions.type === type && dynamicStyles.recurrenceOptionSelected
                   ]}
                   onPress={() => setRecurrenceOptions(prev => ({ ...prev, type }))}
                 >
                   <Text style={[
-                    styles.recurrenceOptionText,
-                    recurrenceOptions.type === type && styles.recurrenceOptionTextSelected
+                    dynamicStyles.recurrenceOptionText,
+                    recurrenceOptions.type === type && dynamicStyles.recurrenceOptionTextSelected
                   ]}>
                     {type.charAt(0).toUpperCase() + type.slice(1)}
                   </Text>
@@ -389,21 +388,21 @@ const EventEditModal: React.FC<EventEditModalProps> = ({
 
             {/* Weekly options */}
             {recurrenceOptions.type === 'weekly' && (
-              <View style={styles.weekDaysContainer}>
-                <Text style={styles.weekDaysLabel}>Days of week:</Text>
-                <View style={styles.weekDaysRow}>
+              <View style={dynamicStyles.weekDaysContainer}>
+                <Text style={dynamicStyles.weekDaysLabel}>Days of week:</Text>
+                <View style={dynamicStyles.weekDaysRow}>
                   {weekDays.map((day, index) => (
                     <TouchableOpacity
                       key={index}
                       style={[
-                        styles.weekDayButton,
-                        recurrenceOptions.daysOfWeek.includes(index) && styles.weekDayButtonSelected
+                        dynamicStyles.weekDayButton,
+                        recurrenceOptions.daysOfWeek.includes(index) && dynamicStyles.weekDayButtonSelected
                       ]}
                       onPress={() => toggleDayOfWeek(index)}
                     >
                       <Text style={[
-                        styles.weekDayText,
-                        recurrenceOptions.daysOfWeek.includes(index) && styles.weekDayTextSelected
+                        dynamicStyles.weekDayText,
+                        recurrenceOptions.daysOfWeek.includes(index) && dynamicStyles.weekDayTextSelected
                       ]}>
                         {day}
                       </Text>
@@ -415,10 +414,10 @@ const EventEditModal: React.FC<EventEditModalProps> = ({
 
             {/* Interval */}
             {recurrenceOptions.type !== 'none' && (
-              <View style={styles.intervalContainer}>
-                <Text style={styles.intervalLabel}>Every</Text>
+              <View style={dynamicStyles.intervalContainer}>
+                <Text style={dynamicStyles.intervalLabel}>Every</Text>
                 <TextInput
-                  style={styles.intervalInput}
+                  style={dynamicStyles.intervalInput}
                   value={recurrenceOptions.interval.toString()}
                   onChangeText={(text) => {
                     const value = parseInt(text, 10);
@@ -428,10 +427,10 @@ const EventEditModal: React.FC<EventEditModalProps> = ({
                   }}
                   keyboardType="numeric"
                 />
-                <Text style={styles.intervalText}>
+                <Text style={dynamicStyles.intervalText}>
                   {recurrenceOptions.type === 'daily' ? 'day(s)' :
-                   recurrenceOptions.type === 'weekly' ? 'week(s)' :
-                   recurrenceOptions.type === 'monthly' ? 'month(s)' : 'year(s)'}
+                  recurrenceOptions.type === 'weekly' ? 'week(s)' :
+                  recurrenceOptions.type === 'monthly' ? 'month(s)' : 'year(s)'}
                 </Text>
               </View>
             )}
@@ -439,106 +438,86 @@ const EventEditModal: React.FC<EventEditModalProps> = ({
 
           {/* Delete Button */}
           {event?.id && onDelete && (
-            <View style={styles.section}>
-              <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+            <View style={dynamicStyles.section}>
+              <TouchableOpacity style={dynamicStyles.deleteButton} onPress={handleDelete}>
                 <Ionicons name="trash-outline" size={20} color="#ef4444" />
-                <Text style={styles.deleteButtonText}>Delete Event</Text>
+                <Text style={dynamicStyles.deleteButtonText}>Delete Event</Text>
               </TouchableOpacity>
             </View>
           )}
         </ScrollView>
 
-        {/* Date/Time Pickers - Simplified */}
-        {showStartDatePicker && (
-          <DateTimePicker
-            value={startDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              console.log('Start date picker onChange:', event.type, selectedDate);
-              if (Platform.OS === 'android') {
-                setShowStartDatePicker(false);
-              }
-              if (selectedDate) {
-                setStartDate(selectedDate);
-                if (isAllDay) {
-                  setEndDate(selectedDate);
-                }
-              }
-            }}
-          />
-        )}
 
-        {showEndDatePicker && (
-          <DateTimePicker
-            value={endDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              console.log('End date picker onChange:', event.type, selectedDate);
-              if (Platform.OS === 'android') {
-                setShowEndDatePicker(false);
-              }
-              if (selectedDate) {
-                setEndDate(selectedDate);
-              }
-            }}
-          />
-        )}
+        {/* Custom Date Time Pickers - Pure React Native */}
+        <CustomDateTimePicker
+          isVisible={showStartDatePicker}
+          mode="date"
+          date={startDate}
+          onConfirm={(date) => {
+            setStartDate(date);
+            setShowStartDatePicker(false);
+          }}
+          onCancel={() => setShowStartDatePicker(false)}
+          title="Pick a start date"
+        />
 
-        {showStartTimePicker && (
-          <DateTimePicker
-            value={startTime}
-            mode="time"
-            display="default"
-            onChange={(event, selectedTime) => {
-              console.log('Start time picker onChange:', event.type, selectedTime);
-              if (Platform.OS === 'android') {
-                setShowStartTimePicker(false);
-              }
-              if (selectedTime) {
-                setStartTime(selectedTime);
-              }
-            }}
-          />
-        )}
+        <CustomDateTimePicker
+          isVisible={showEndDatePicker}
+          mode="date"
+          date={endDate}
+          minimumDate={startDate}
+          onConfirm={(date) => {
+            setEndDate(date);
+            setShowEndDatePicker(false);
+          }}
+          onCancel={() => setShowEndDatePicker(false)}
+          title="Pick an end date"
+        />
 
-        {showEndTimePicker && (
-          <DateTimePicker
-            value={endTime}
-            mode="time"
-            display="default"
-            onChange={(event, selectedTime) => {
-              console.log('End time picker onChange:', event.type, selectedTime);
-              if (Platform.OS === 'android') {
-                setShowEndTimePicker(false);
-              }
-              if (selectedTime) {
-                setEndTime(selectedTime);
-              }
-            }}
-          />
-        )}
+        <CustomDateTimePicker
+          isVisible={showStartTimePicker}
+          mode="time"
+          date={startTime}
+          onConfirm={(time) => {
+            setStartTime(time);
+            setShowStartTimePicker(false);
+          }}
+          onCancel={() => setShowStartTimePicker(false)}
+          title="Pick a start time"
+        />
 
-        {showStartDatePicker && Platform.OS === 'ios' && (
-          <View style={{ padding: 16, backgroundColor: 'white', borderTopWidth: 1, borderTopColor: '#e5e7eb' }}>
-            <TouchableOpacity
-              style={{ backgroundColor: '#6366f1', padding: 12, borderRadius: 8, alignItems: 'center' }}
-              onPress={() => setShowStartDatePicker(false)}
-            >
-              <Text style={{ color: 'white', fontSize: 16, fontWeight: '500' }}>Done</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-    </Modal>
+        <CustomDateTimePicker
+          isVisible={showEndTimePicker}
+          mode="time"
+          date={endTime}
+          onConfirm={(time) => {
+            setEndTime(time);
+            setShowEndTimePicker(false);
+          }}
+          onCancel={() => setShowEndTimePicker(false)}
+          title="Pick an end time"
+        />
+
+      </SafeAreaView>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme: any) => StyleSheet.create({
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: theme.colors.card,
+    zIndex: 1000,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: theme.colors.background,
+    position: 'relative',
+    zIndex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -546,9 +525,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.card,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: theme.colors.border,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   headerButton: {
     paddingHorizontal: 8,
@@ -556,7 +546,7 @@ const styles = StyleSheet.create({
   },
   headerButtonText: {
     fontSize: 16,
-    color: '#6366f1',
+    color: theme.colors.primary,
   },
   saveButton: {
     fontWeight: '600',
@@ -564,7 +554,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1f2937',
+    color: theme.colors.text,
   },
   content: {
     flex: 1,
@@ -576,17 +566,29 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#374151',
+    color: theme.colors.text,
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: theme.colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.card,
+    color: theme.colors.text,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 1,
+      },
+      android: {
+        elevation: 1,
+      },
+    }),
   },
   textArea: {
     height: 80,
@@ -607,15 +609,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: theme.colors.border,
     borderRadius: 8,
     gap: 8,
   },
   dateTimeText: {
     fontSize: 16,
-    color: '#374151',
+    color: theme.colors.text,
   },
   recurrenceContainer: {
     flexDirection: 'row',
@@ -625,18 +627,18 @@ const styles = StyleSheet.create({
   recurrenceOption: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: theme.colors.border,
     borderRadius: 20,
   },
   recurrenceOptionSelected: {
-    backgroundColor: '#6366f1',
-    borderColor: '#6366f1',
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
   },
   recurrenceOptionText: {
     fontSize: 14,
-    color: '#374151',
+    color: theme.colors.text,
   },
   recurrenceOptionTextSelected: {
     color: '#ffffff',
@@ -646,7 +648,8 @@ const styles = StyleSheet.create({
   },
   weekDaysLabel: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.colors.text,
+    opacity: 0.7,
     marginBottom: 8,
   },
   weekDaysRow: {
@@ -658,18 +661,18 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: theme.colors.border,
     borderRadius: 20,
   },
   weekDayButtonSelected: {
-    backgroundColor: '#6366f1',
-    borderColor: '#6366f1',
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
   },
   weekDayText: {
     fontSize: 12,
-    color: '#374151',
+    color: theme.colors.text,
     fontWeight: '500',
   },
   weekDayTextSelected: {
@@ -683,29 +686,32 @@ const styles = StyleSheet.create({
   },
   intervalLabel: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.colors.text,
+    opacity: 0.7,
   },
   intervalInput: {
     width: 60,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: theme.colors.border,
     borderRadius: 4,
     textAlign: 'center',
     fontSize: 14,
+    color: theme.colors.text,
   },
   intervalText: {
     fontSize: 14,
-    color: '#6b7280',
+    color: theme.colors.text,
+    opacity: 0.7,
   },
   deleteButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
     borderColor: '#ef4444',
     borderRadius: 8,
@@ -714,6 +720,17 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     fontSize: 16,
     color: '#ef4444',
+    fontWeight: '500',
+  },
+  doneButton: {
+    backgroundColor: theme.colors.primary,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  doneButtonText: {
+    color: 'white',
+    fontSize: 16,
     fontWeight: '500',
   },
 });

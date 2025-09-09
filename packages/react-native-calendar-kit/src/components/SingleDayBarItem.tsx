@@ -319,10 +319,15 @@ const styles = StyleSheet.create({
   dayItemContainer: { borderRightWidth: 1 },
   rightContainer: { flexGrow: 1 },
   eventContent: {
-    width: ' 100%',
+    width: '100%',
     height: '100%',
     overflow: 'hidden',
-    borderRadius: 2,
+    borderRadius: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    elevation: 2,
   },
   countContainer: {
     justifyContent: 'center',

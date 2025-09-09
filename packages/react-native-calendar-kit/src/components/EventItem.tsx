@@ -276,13 +276,29 @@ export default React.memo(EventItem, (prev, next) => {
 });
 
 const styles = StyleSheet.create({
-  container: { position: 'absolute', overflow: 'hidden' },
-  title: { fontSize: 12, paddingHorizontal: 2 },
+  container: { 
+    position: 'absolute', 
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  title: { 
+    fontSize: 12, 
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    fontWeight: '500',
+  },
   contentContainer: {
-    borderRadius: 2,
+    borderRadius: 6,
     width: '100%',
     height: '100%',
     overflow: 'hidden',
   },
-  overlapEvent: { borderWidth: 1, borderColor: '#FFF' },
+  overlapEvent: { 
+    borderWidth: 1.5, 
+    borderColor: '#FFF',
+  },
 });
